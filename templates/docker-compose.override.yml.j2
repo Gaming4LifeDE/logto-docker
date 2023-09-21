@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  app:
+    environment:
+      ENDPOINT: "{{ endpoint_url }}"
+      ADMIN_ENDPOINT: "{{ admin_endpoint_url }}"
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+    {% if endpoint_port is defined or admin_endpoint_port is defined %}
+    ports:
+      {% if endpoint_port is defined %}
+      - "{{ endpoint_port }}:3001"
+      {% endif %}
+      {% if admin_endpoint_port is defined %}
+      - "{{ admin_endpoint_port }}:3002"
+      {% endif %}
+    {% endif %}
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: "{{ postgres_password }}"

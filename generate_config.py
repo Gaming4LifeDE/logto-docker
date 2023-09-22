@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import subprocess
 import pkg_resources
 import argparse
 import sys
@@ -43,5 +44,5 @@ else:
     data["endpoint_url"] = Prompt.ask(prompt="[yellow]Where should Logto be reachable at? [/][magenta]\[eg. https://sso.example.com\][/]", console=console)
     data["admin_endpoint_url"] = Prompt.ask(prompt="[yellow]Where should the Logto administration interface be reachable at? [/][magenta]\[eg. https://sso-admin.example.com\][/]", console=console)
     data["endpoint_port"] = IntPrompt.ask(prompt="[yellow]Which port should Logto be exposed on?", console=console, default=3001)
-
+data["postgres_password"] = secrets.token_hex(32)
 print(template.render(data))

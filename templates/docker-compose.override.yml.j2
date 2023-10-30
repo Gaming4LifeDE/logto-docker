@@ -4,7 +4,7 @@ services:
     environment:
       ENDPOINT: "{{ endpoint_url }}"
       ADMIN_ENDPOINT: "{{ admin_endpoint_url }}"
-      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      DB_URL: "postgres://postgres:{{ postgres_password }}@postgres:5432/logto"
     {% if endpoint_port is defined or admin_endpoint_port is defined %}
     ports:
       {% if endpoint_port is defined %}

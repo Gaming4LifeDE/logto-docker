@@ -14,10 +14,11 @@ for package in ["jinja2", "rich", "validators"]:
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 from jinja2 import Template
-from rich import print
+from rich import print, box
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.prompt import Prompt, IntPrompt, Confirm
+from rich.table import Table
 import validators
 
 with open("templates/docker-compose.override.yml.j2") as template_file:
@@ -74,7 +75,7 @@ else:
         else:
             print("[red]This port does not seem to be valid, please enter a port number between 1 and 65536")
     while not data.get("output_file"):
-        prompt_input = Prompt.ask(prompt="[yellow]Where do you want your docker-compose.yml to be saved at? [/]", console=console, default="./docker-compose.yml")
+        prompt_input = Prompt.ask(prompt="[yellow]Where do you want your docker-compose.yml to be saved at? [/]", console=console, default="./docker-compose.override.yml")
         if (not os.access(os.path.expanduser(prompt_input), os.F_OK) and os.access(os.path.expanduser(os.path.dirname(prompt_input)), os.W_OK)):
             data["output_file"] = prompt_input
         elif os.access(os.path.expanduser(prompt_input), os.F_OK) and os.access(os.path.expanduser(prompt_input), os.W_OK):
@@ -86,6 +87,15 @@ else:
                 sys.exit(1)
         else:
             print("[red]The specified path does not seem to be writable, please try again")
+
+    summary_table = Table(box=box.MINIMAL,header_style="yellow")
+    summary_table.add_column("Option", style="magenta")
+    summary_table.add_column("Your Choice")
+
+    summary_table.add_row("Endpoint URL", data["endpoint_url"])
+    summary_table.add_row("Admin Endpoint URL", data["admin_endpoint_url"])
+
+    console.print(summary_table)
 
 data["postgres_password"] = secrets.token_hex(32)
 print(template.render(data))
